@@ -54,6 +54,7 @@ import me.neko.nzhelper.data.Session
 import me.neko.nzhelper.data.SessionRepository
 import java.time.DayOfWeek
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -167,6 +168,48 @@ fun StatisticsScreen() {
         }
     }
 
+    val yearMonthlyStats by remember {
+        derivedStateOf {
+            if (sessions.isEmpty()) emptyList()
+            else {
+                val now = LocalDateTime.now()
+                val currentYear = now.year
+
+                // 按年月分组统计时长（秒 → 分钟）
+                val statsMap = sessions
+                    .filter { it.timestamp.year == currentYear }
+                    .groupBy { YearMonth.from(it.timestamp) }
+                    .mapValues { entry ->
+                        entry.value.sumOf { it.duration } / 60f
+                    }
+
+                // 只保留有时长的月份，并按月份顺序排序
+                statsMap
+                    .filter { it.value > 0f }  // 过滤掉空白月份
+                    .entries
+                    .sortedBy { it.key }       // 从1月到12月自然排序
+                    .map { entry ->
+                        val monthName = when (entry.key.monthValue) {
+                            1 -> "1月"
+                            2 -> "2月"
+                            3 -> "3月"
+                            4 -> "4月"
+                            5 -> "5月"
+                            6 -> "6月"
+                            7 -> "7月"
+                            8 -> "8月"
+                            9 -> "9月"
+                            10 -> "10月"
+                            11 -> "11月"
+                            12 -> "12月"
+                            else -> ""
+                        }
+                        monthName to entry.value
+                    }
+            }
+        }
+    }
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         topBar = {
@@ -220,15 +263,6 @@ fun StatisticsScreen() {
                         )
                     }
 
-                    // 今年时长
-                    item {
-                        PeriodStatCard(
-                            title = "今年时长",
-                            stats = yearStats,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-
                     item {
                         Column {
                             Text(
@@ -239,7 +273,7 @@ fun StatisticsScreen() {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 24.dp),
+                                    .padding(bottom = 32.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -300,7 +334,7 @@ fun StatisticsScreen() {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(bottom = 24.dp),
+                                    .padding(bottom = 32.dp),
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -344,6 +378,67 @@ fun StatisticsScreen() {
                             }
                             BarChart(
                                 data = monthDailyStats
+                            )
+                        }
+                    }
+
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "今年",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 32.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        formatDuration(yearStats.first),
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        "今年总时长",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    if (yearStats.first > 0) {
+                                        Text(
+                                            "%.1f 分钟".format(yearStats.second),
+                                            style = MaterialTheme.typography.headlineMedium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                        Text(
+                                            "平均每次",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    } else {
+                                        Text(
+                                            "0 分钟",
+                                            style = MaterialTheme.typography.headlineMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            "平均每次",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                            BarChart(
+                                data = yearMonthlyStats
                             )
                         }
                     }
@@ -403,42 +498,7 @@ private fun formatDuration(totalSeconds: Int): String {
     }
 }
 
-// 周期统计卡片
-@Composable
-private fun PeriodStatCard(
-    title: String,
-    stats: Pair<Int, Float>,
-    modifier: Modifier = Modifier
-) {
-    val (totalSeconds, avgMinutes) = stats
-
-    Card(
-        modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
-            Text(
-                formatDuration(totalSeconds),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            if (totalSeconds > 0) {
-                Text(
-                    "平均 %.1f 分钟/次".format(avgMinutes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-    }
-}
-
-// 新增：总体统计卡片
+// 总体统计卡片
 @Composable
 private fun TotalStatCard(
     totalCount: Int,
@@ -483,7 +543,7 @@ private data class DailyStat(
     val totalDuration: Int // 秒
 )
 
-// 纯 Compose 实现的简单条形图
+// 条形图
 @Composable
 fun BarChart(
     data: List<Pair<String, Float>>,
