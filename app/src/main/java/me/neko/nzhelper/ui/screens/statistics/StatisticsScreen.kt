@@ -830,7 +830,7 @@ fun BarChart(
             .fillMaxWidth()
             .height(chartHeight + 60.dp) // 给 X 轴留空间
     ) {
-        // ================= Y Axis =================
+
         YAxis(
             maxValue = maxValue,
             modifier = Modifier
@@ -838,7 +838,6 @@ fun BarChart(
                 .fillMaxHeight()
         )
 
-        // ================= Chart =================
         @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
         BoxWithConstraints(
             modifier = Modifier
@@ -875,28 +874,30 @@ fun BarChart(
 @Composable
 private fun YAxis(
     maxValue: Float,
-    modifier: Modifier = Modifier,
-    tickCount: Int = 5
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxHeight()
+            .padding(bottom = 40.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.End
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(bottom = 32.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            for (i in tickCount downTo 0) {
-                val value = maxValue * i / tickCount
-                Text(
-                    text = "${value.toInt()} 分钟",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
+        Text(
+            "${maxValue.toInt()} 分钟",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            "${(maxValue / 2).toInt()} 分钟",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        )
+        Text(
+            "0",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+        )
     }
 }
 
@@ -917,20 +918,18 @@ private fun BarItem(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // ======= 图表区域 =======
         Box(
             modifier = Modifier
                 .height(chartHeight)
                 .fillMaxWidth()
         ) {
 
-            // 柱子（贴底）
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .height(barHeight)
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                     .background(color)
             )
 
