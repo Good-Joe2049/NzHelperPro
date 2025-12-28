@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
@@ -180,7 +181,9 @@ fun MainScreen() {
                         text = "当前版本：${BuildConfig.VERSION_NAME}\n" +
                                 "最新版本：$latestTag\n\n" +
                                 "有新版本发布啦，是否前往 GitHub 下载？",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
                 },
                 confirmButton = {
@@ -250,7 +253,9 @@ fun MainScreen() {
                 text = {
                     Text(
                         text = "为确保应用能在后台继续计时，请授予通知权限！",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
                 },
                 confirmButton = {
