@@ -1,6 +1,5 @@
 package me.neko.nzhelper.ui.dialog
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,26 +8,33 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -53,188 +59,204 @@ fun DetailsDialog(
 ) {
     if (!show) return
 
-    AlertDialog(
+    Dialog(
         onDismissRequest = onDismiss,
-        title = { Text("填写本次信息") },
-        text = {
-            val scrollState = rememberScrollState()
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            tonalElevation = 6.dp,
+            modifier = Modifier
+                .fillMaxWidth(0.92f)
+                .wrapContentHeight()
+        ) {
             Column(
-                Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState)
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // 备注
-                Text("备注（可选）")
-                Spacer(Modifier.height(2.dp))
-                OutlinedTextField(
-                    value = remark,
-                    onValueChange = onRemarkChange,
-                    placeholder = { Text("有什么想说的？") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(12.dp))
-
-                // 起飞地点
-                Text("起飞地点（可选）")
-                Spacer(Modifier.height(2.dp))
-                OutlinedTextField(
-                    value = location,
-                    onValueChange = onLocationChange,
-                    placeholder = { Text("例如：卧室") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(Modifier.height(12.dp))
-
-                // 选项：是否观看小电影 / 是否发射（高潮）
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onWatchedMovieChange(!watchedMovie) }
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Checkbox(checked = watchedMovie, onCheckedChange = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("是否观看小电影")
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onClimaxChange(!climax) }
-                            .padding(vertical = 8.dp)
-                    ) {
-                        Checkbox(checked = climax, onCheckedChange = null)
-                        Spacer(Modifier.width(4.dp))
-                        Text("是否发射")
-                    }
-                }
-
-                Spacer(Modifier.height(12.dp))
-
-                // 道具
                 Text(
-                    text = "道具：",
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                val propList = listOf("手", "斐济杯", "小胶妻")
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    propList.forEach { p ->
-                        val isSelected = props == p
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    if (isSelected) MaterialTheme.colorScheme.primaryContainer
-                                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.12f)
-                                )
-                                .clickable { onPropsChange(p) }
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            RadioButton(
-                                selected = isSelected,
-                                onClick = null, // 交由 Row 处理点击
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = MaterialTheme.colorScheme.primary,
-                                    unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = p,
-                                color = if (isSelected)
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                                else
-                                    MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-                Spacer(Modifier.height(12.dp))
-
-                // 评分
-                Text("评分：${"%.1f".format(rating)}")
-                Slider(
-                    value = rating,
-                    onValueChange = onRatingChange,
-                    valueRange = 0f..5f,
-                    steps = 25,
+                    text = "填写本次信息",
+                    style = MaterialTheme.typography.titleLarge,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                InputSection(title = "起飞地点（可选）") {
+                    OutlinedTextField(
+                        value = location,
+                        onValueChange = onLocationChange,
+                        placeholder = { Text("例如：卧室") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
+                CheckboxGroup(
+                    watchedMovie = watchedMovie,
+                    onWatchedMovieChange = onWatchedMovieChange,
+                    climax = climax,
+                    onClimaxChange = onClimaxChange
+                )
+
+                SelectionSection(
+                    title = "道具",
+                    items = listOf("手", "斐济杯", "小胶妻"),
+                    selected = props,
+                    onSelected = onPropsChange
+                )
+
+                RatingSection(rating = rating, onRatingChange = onRatingChange)
+
+                SelectionSection(
+                    title = "心情",
+                    items = listOf("平静", "愉悦", "兴奋", "疲惫", "这是最后一次！"),
+                    selected = mood,
+                    onSelected = onMoodChange
+                )
+
+                InputSection(title = "备注（可选）") {
+                    OutlinedTextField(
+                        value = remark,
+                        onValueChange = onRemarkChange,
+                        placeholder = { Text("有什么想说的？") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = false,
+                        maxLines = 3
+                    )
+                }
+
                 Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("0")
-                    Text("5.0")
-                }
-                Spacer(Modifier.height(12.dp))
-
-                // 心情
-                Text(
-                    text = "心情：",
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                val moods = listOf("平静", "愉悦", "兴奋", "疲惫", "这是最后一次！")
-                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
                 ) {
-                    moods.forEach { m ->
-                        val isSelected = mood == m
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(
-                                    if (isSelected) MaterialTheme.colorScheme.primaryContainer
-                                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.12f)
-                                )
-                                .clickable { onMoodChange(m) }
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            RadioButton(
-                                selected = isSelected,
-                                onClick = null,
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = MaterialTheme.colorScheme.primary,
-                                    unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
-                            Spacer(Modifier.width(4.dp))
-                            Text(
-                                text = m,
-                                color = if (isSelected)
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                                else
-                                    MaterialTheme.colorScheme.onSurface
-                            )
-                        }
+                    TextButton(onClick = onDismiss) {
+                        Text("取消")
+                    }
+                    Button(onClick = onConfirm) {
+                        Text("确认")
                     }
                 }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("确认")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("取消")
             }
         }
-    )
+    }
+}
+
+@Composable
+private fun InputSection(
+    title: String,
+    content: @Composable () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(title, style = MaterialTheme.typography.titleMedium)
+        content()
+    }
+}
+
+@Composable
+private fun CheckboxGroup(
+    watchedMovie: Boolean,
+    onWatchedMovieChange: (Boolean) -> Unit,
+    climax: Boolean,
+    onClimaxChange: (Boolean) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .clickable { onWatchedMovieChange(!watchedMovie) }
+                .padding(horizontal = 8.dp, vertical = 12.dp)
+        ) {
+            Checkbox(checked = watchedMovie, onCheckedChange = null)
+            Spacer(Modifier.width(12.dp))
+            Text("是否观看小电影", style = MaterialTheme.typography.bodyLarge)
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.medium)
+                .clickable { onClimaxChange(!climax) }
+                .padding(horizontal = 8.dp, vertical = 12.dp)
+        ) {
+            Checkbox(checked = climax, onCheckedChange = null)
+            Spacer(Modifier.width(12.dp))
+            Text("是否发射", style = MaterialTheme.typography.bodyLarge)
+        }
+    }
+}
+
+@Composable
+private fun SelectionSection(
+    title: String,
+    items: List<String>,
+    selected: String,
+    onSelected: (String) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(title, style = MaterialTheme.typography.titleMedium)
+
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items.forEach { item ->
+                FilterChip(
+                    onClick = { onSelected(item) },
+                    label = { Text(item) },
+                    selected = selected == item,
+                    leadingIcon = if (selected == item) {
+                        {
+                            Icon(
+                                imageVector = Icons.Default.Done,
+                                contentDescription = null,
+                                modifier = Modifier.size(FilterChipDefaults.IconSize)
+                            )
+                        }
+                    } else null
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun RatingSection(
+    rating: Float,
+    onRatingChange: (Float) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("评分", style = MaterialTheme.typography.titleMedium)
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "%.1f".format(rating),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.width(48.dp)
+            )
+            Slider(
+                value = rating,
+                onValueChange = onRatingChange,
+                valueRange = 0f..5f,
+                steps = 49, // 0.1 为步长 → 50 个区间，steps=49
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "5.0",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.width(40.dp),
+                textAlign = TextAlign.End
+            )
+        }
+    }
 }
