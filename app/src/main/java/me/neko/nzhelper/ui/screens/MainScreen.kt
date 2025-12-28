@@ -3,20 +3,30 @@ package me.neko.nzhelper.ui.screens
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.navigation.NavController
@@ -168,29 +179,55 @@ fun MainScreen() {
                     Text(
                         text = "当前版本：${BuildConfig.VERSION_NAME}\n" +
                                 "最新版本：$latestTag\n\n" +
-                                "针对你的牛牛进行了一些优化，是否前往 GitHub 下载？",
+                                "有新版本发布啦，是否前往 GitHub 下载？",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 },
                 confirmButton = {
-                    TextButton(
-                        onClick = {
-                            showUpdateDialog = false
-                            val intent = Intent(
-                                Intent.ACTION_VIEW,
-                                "https://github.com/$owner/$repo/releases/latest".toUri()
-                            )
-                            context.startActivity(intent)
-                        }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text("去下载")
+                        Button(
+                            onClick = {
+                                showUpdateDialog = false
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    "https://github.com/$owner/$repo/releases/latest".toUri()
+                                )
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            contentPadding = PaddingValues(vertical = 14.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Download,
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = "去下载",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        FilledTonalButton(
+                            onClick = { showUpdateDialog = false },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            contentPadding = PaddingValues(vertical = 14.dp)
+                        ) {
+                            Text(
+                                text = "稍后再说",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
                     }
                 },
-                dismissButton = {
-                    TextButton(onClick = { showUpdateDialog = false }) {
-                        Text("稍后再说")
-                    }
-                }
+                dismissButton = {}
             )
         }
 
@@ -217,20 +254,46 @@ fun MainScreen() {
                     )
                 },
                 confirmButton = {
-                    TextButton(
-                        onClick = {
-                            openNotificationSettings(context)
-                            showNotifyDialog = false
-                        }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text("去开启")
+                        Button(
+                            onClick = {
+                                openNotificationSettings(context)
+                                showNotifyDialog = false
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            contentPadding = PaddingValues(vertical = 14.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(
+                                text = "开启通知",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
+
+                        FilledTonalButton(
+                            onClick = { showNotifyDialog = false },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(20.dp),
+                            contentPadding = PaddingValues(vertical = 14.dp)
+                        ) {
+                            Text(
+                                text = "暂不开启",
+                                style = MaterialTheme.typography.labelLarge
+                            )
+                        }
                     }
                 },
-                dismissButton = {
-                    TextButton(onClick = { showNotifyDialog = false }) {
-                        Text("以后再说")
-                    }
-                }
+                dismissButton = {}
             )
         }
     }
