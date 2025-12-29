@@ -301,7 +301,6 @@ fun HomeScreen() {
                 )
             }
 
-            // 详情填写对话框
             DetailsDialog(
                 show = showDetailsDialog,
                 remark = remarkInput,
@@ -332,9 +331,11 @@ fun HomeScreen() {
                         props = props
                     )
                     sessions.add(session)
-                    scope.launch { SessionRepository.saveSessions(context, sessions) }
+                    scope.launch {
+                        SessionRepository.saveSessions(context, sessions)
+                    }
 
-                    // 重置状态
+                    // 重置所有输入状态
                     isRunning = false
                     remarkInput = ""
                     locationInput = ""
@@ -345,12 +346,14 @@ fun HomeScreen() {
                     props = "手"
                     showDetailsDialog = false
 
-                    // 停止服务
+                    // 停止计时服务
                     context.startService(
                         serviceIntent.apply { action = TimerService.ACTION_STOP }
                     )
                 },
-                onDismiss = { showDetailsDialog = false }
+                onDismiss = {
+                    showDetailsDialog = false
+                }
             )
         }
     }
