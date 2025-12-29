@@ -24,12 +24,16 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -44,7 +48,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -60,7 +63,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -72,6 +74,7 @@ import kotlinx.coroutines.withContext
 import me.neko.nzhelper.NzApplication
 import me.neko.nzhelper.data.Session
 import me.neko.nzhelper.data.SessionRepository
+import me.neko.nzhelper.ui.dialog.CustomAppAlertDialog
 import me.neko.nzhelper.ui.dialog.DetailsDialog
 import java.io.OutputStreamWriter
 import java.time.LocalDateTime
@@ -327,7 +330,7 @@ fun HistoryScreen() {
                                         }
                                     }
                                     IconButton(onClick = { sessionToDelete = session }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "删除")
+                                        Icon(Icons.Rounded.Delete, contentDescription = "删除")
                                     }
                                 }
                             }
@@ -338,39 +341,43 @@ fun HistoryScreen() {
 
             // 删除确认
             sessionToDelete?.let { session ->
-                AlertDialog(
+                CustomAppAlertDialog(
                     onDismissRequest = { sessionToDelete = null },
-                    title = { Text("删除记录") },
-                    text = { Text("确认删除此记录吗？") },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            sessions.remove(session)
-                            scope.launch { SessionRepository.saveSessions(context, sessions) }
-                            sessionToDelete = null
-                        }) { Text("删除") }
+                    iconVector = Icons.Rounded.Warning,
+                    title = "删除记录",
+                    message = "确认删除此记录吗？删除后不可恢复。",
+                    confirmText = "删除",
+                    confirmIcon = Icons.Rounded.Delete,
+                    dismissText = "取消",
+                    onConfirm = {
+                        sessions.remove(session)
+                        scope.launch {
+                            SessionRepository.saveSessions(context, sessions)
+                        }
                     },
-                    dismissButton = {
-                        TextButton(onClick = { sessionToDelete = null }) { Text("取消") }
-                    }
+                    onDismiss = { sessionToDelete = null },
+                    modifier = Modifier
                 )
             }
 
             // 清除全部确认
             if (showClearDialog) {
-                AlertDialog(
+                CustomAppAlertDialog(
                     onDismissRequest = { showClearDialog = false },
-                    title = { Text("清除全部记录") },
-                    text = { Text("此操作不可撤销，确定要删除所有记录吗？") },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            sessions.clear()
-                            scope.launch { SessionRepository.saveSessions(context, sessions) }
-                            showClearDialog = false
-                        }) { Text("删除全部") }
+                    iconVector = Icons.Rounded.Warning,
+                    title = "清除全部记录",
+                    message = "此操作不可撤销，确定要删除所有记录吗？",
+                    confirmText = "删除全部",
+                    confirmIcon = Icons.Rounded.DeleteForever,
+                    dismissText = "取消",
+                    onConfirm = {
+                        sessions.clear()
+                        scope.launch {
+                            SessionRepository.saveSessions(context, sessions)
+                        }
                     },
-                    dismissButton = {
-                        TextButton(onClick = { showClearDialog = false }) { Text("取消") }
-                    }
+                    onDismiss = { showClearDialog = false },
+                    modifier = Modifier
                 )
             }
 
@@ -379,7 +386,8 @@ fun HistoryScreen() {
                 Dialog(onDismissRequest = { sessionToView = null }) {
                     Surface(
                         shape = MaterialTheme.shapes.extraLarge,
-                        tonalElevation = 8.dp,
+                        tonalElevation = 6.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         modifier = Modifier
                             .fillMaxWidth(0.92f)
                             .wrapContentHeight()
@@ -390,12 +398,18 @@ fun HistoryScreen() {
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            Text(
-                                "会话详情",
-                                style = MaterialTheme.typography.titleLarge,
-                                textAlign = TextAlign.Center,
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier.fillMaxWidth()
-                            )
+                            ) {
+                                Text(
+                                    text = "详情",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
                             HorizontalDivider()
 
                             DetailRow(
@@ -414,25 +428,41 @@ fun HistoryScreen() {
                             Spacer(Modifier.height(8.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+                                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.End)
                             ) {
-                                TextButton(onClick = { sessionToView = null }) {
+                                Button(
+                                    onClick = { sessionToView = null },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(44.dp),
+                                    shape = RoundedCornerShape(18.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                        contentColor = MaterialTheme.colorScheme.secondary
+                                    )
+                                ) {
                                     Text("关闭")
                                 }
-                                Button(onClick = {
-                                    // 进入编辑模式
-                                    editSession = session
-                                    isEditing = true
-                                    remarkInput = session.remark
-                                    locationInput = session.location
-                                    watchedMovie = session.watchedMovie
-                                    climax = session.climax
-                                    rating = session.rating
-                                    mood = session.mood
-                                    props = session.props
-                                    showDetailsDialog = true
-                                    sessionToView = null
-                                }) {
+
+                                Button(
+                                    onClick = {
+                                        editSession = session
+                                        isEditing = true
+                                        remarkInput = session.remark
+                                        locationInput = session.location
+                                        watchedMovie = session.watchedMovie
+                                        climax = session.climax
+                                        rating = session.rating
+                                        mood = session.mood
+                                        props = session.props
+                                        showDetailsDialog = true
+                                        sessionToView = null
+                                    },
+                                    modifier = Modifier.height(44.dp),
+                                    shape = RoundedCornerShape(18.dp)
+                                ) {
+                                    Icon(Icons.Rounded.Edit, contentDescription = null)
+                                    Spacer(Modifier.width(8.dp))
                                     Text("编辑")
                                 }
                             }

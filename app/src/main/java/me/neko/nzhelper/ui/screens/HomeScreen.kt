@@ -28,10 +28,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -202,7 +202,7 @@ fun HomeScreen() {
                                     )
                             ) {
                                 Icon(
-                                    imageVector = if (isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                    imageVector = if (isRunning) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                                     contentDescription = if (isRunning) "暂停" else "开始",
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.size(36.dp)
@@ -223,7 +223,7 @@ fun HomeScreen() {
                                     )
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Stop,
+                                    imageVector = Icons.Rounded.Stop,
                                     contentDescription = "结束",
                                     tint = MaterialTheme.colorScheme.onErrorContainer,
                                     modifier = Modifier.size(36.dp)
