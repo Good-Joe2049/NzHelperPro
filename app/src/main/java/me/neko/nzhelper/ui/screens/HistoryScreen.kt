@@ -2,6 +2,7 @@ package me.neko.nzhelper.ui.screens
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -65,7 +66,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.gson.JsonParser.parseString
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.neko.nzhelper.NzApplication
 import me.neko.nzhelper.data.Session
 import me.neko.nzhelper.data.SessionRepository
@@ -187,6 +190,17 @@ fun HistoryScreen() {
                             sessions.clear()
                             sessions.addAll(importedSessions)
                             SessionRepository.saveSessions(context, sessions)
+
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    context,
+                                    "成功导入 ${importedSessions.size} 条记录",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "导入失败：文件格式不正确", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 } catch (e: Exception) {
