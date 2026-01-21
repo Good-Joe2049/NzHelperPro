@@ -31,7 +31,7 @@
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=bug-bit/NzHelper&type=Timeline)](https://star-history.com/#bug-bit/NzHelper&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=Good-Joe2049/NzHelperPro&type=Timeline)](https://star-history.com/#Good-Joe2049/NzHelperPro&Timeline)
 
 ## 许可协议
 
