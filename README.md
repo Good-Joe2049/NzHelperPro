@@ -5,10 +5,10 @@
 # NzHelperPro
 
 [![license](https://img.shields.io/github/license/bug-bit/NzHelper.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Stars](https://img.shields.io/github/stars/bug-bit/NzHelper?label=stars)](https://github.com/bug-bit/NzHelper)
+[![Stars](https://img.shields.io/github/stars/Good-Joe2049/NzHelperPro?label=stars)](https://github.com/Good-Joe2049/NzHelperPro)
 <a href="https://github.com/Good-Joe2049/NzHelperPro/releases"><img alt="GitHub all releases" src="https://img.shields.io/github/downloads/Good-Joe2049/NzHelperPro/total?label=Downloads"></a>
 [![GitHub Release](https://img.shields.io/github/v/release/Good-Joe2049/NzHelperPro)](https://github.com/Good-Joe2049/NzHelperPro/releases)
-<a href="[https://github.com/Good-Joe2049/NzHelperPro/issues]"><img alt="GitHub issues" src="https://img.shields.io/github/issues/bug-bit/NzHelper"></a>
+<a href="[https://github.com/Good-Joe2049/NzHelperPro/issues]"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Good-Joe2049/NzHelperPro"></a>
 
 一个简单、高效、易用的打飞机记录工具，帮助你科学管理✈️生活
 
