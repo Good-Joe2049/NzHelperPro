@@ -18,4 +18,4 @@ local.properties
 **/release/
 **/outputs/
 *.apk
-*.aab
+*.aabb
