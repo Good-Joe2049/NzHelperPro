@@ -2,7 +2,7 @@
 
 ![NzHelper](https://socialify.git.ci/bug-bit/NzHelper/image?description=1&font=Inter&forks=1&language=1&name=1&owner=1&stargazers=1&theme=Auto)
 
-# NzHelper
+# NzHelperPro
 
 [![license](https://img.shields.io/github/license/bug-bit/NzHelper.svg)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Stars](https://img.shields.io/github/stars/bug-bit/NzHelper?label=stars)](https://github.com/bug-bit/NzHelper)
