@@ -1,6 +1,6 @@
 <div align="center">
 
-![NzHelper](https://socialify.git.ci/bug-bit/NzHelper/image?description=1&font=Inter&forks=1&language=1&name=1&owner=1&stargazers=1&theme=Auto)
+![NzHelper](https://socialify.git.ci/Good-Joe2049/NzHelperPro/image?description=1&font=Inter&forks=1&language=1&name=1&owner=1&stargazers=1&theme=Auto)
 
 # NzHelperPro
 
